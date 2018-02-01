@@ -27,8 +27,10 @@ app.use('*', (req, res, next) => {
 app.use(morgan('dev'))
 
 // routers
-// app.use(userRouter)
-// app.use(authRouter)
+
+//app.use(userRouter)
+//app.use(authRouter)
+
 
 
 // handle errors
