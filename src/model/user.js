@@ -7,7 +7,6 @@ import * as jwt from 'jsonwebtoken';
 import createError from 'http-errors';
 import {promisify} from '../lib/promisify.js';
 import Mongoose, {Schema} from 'mongoose';
-import faker from 'faker';
 
 // SCHEMA
 const userSchema =    new Schema({
