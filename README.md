@@ -12,13 +12,13 @@ Ideas for app:
 
 3.MVP
 Admins are able to create a group and invite members.
-Tasks are rendered in a list
-Users can sign up(?)
-Mobile first
+Tasks are rendered in a list.
+Users can sign up(?).
+Mobile first.
 
 
 4.Stretch goals: 
-  Users choosing avatars
-  Showing percentages of total work done by each user on the tasks page
-  Keeping track of the tasks done in a user profile view
-  Adding cordova wrapper
+  Users choosing avatars.  
+  Showing percentages of total work done by each user on the tasks page.  
+  Keeping track of the tasks done in a user profile view.  
+  Adding cordova wrapper.  
