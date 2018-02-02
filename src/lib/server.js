@@ -28,8 +28,8 @@ app.use(morgan('dev'))
 
 // routers
 
-//app.use(userRouter)
-//app.use(authRouter)
+app.use(userRouter)
+app.use(authRouter)
 
 
 
@@ -38,14 +38,14 @@ app.use(fourOhFour)
 app.use(errorHandler)
 
 const state = {
-  isOn: false, 
+  isOn: false,
   http: null,
 }
 
-// INTERFACE 
+// INTERFACE
 export const start = (port) => {
   return new Promise((resolve, reject) => {
-    if (state.isOn) 
+    if (state.isOn)
       return reject(new Error('USAGE ERROR: the state is on'))
     state.isOn = true
     mongo.start()
