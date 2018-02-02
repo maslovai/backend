@@ -14,6 +14,9 @@ const userSchema =    new Schema({
     username: {type: String, required: true, unique: true},
     passwordHash: {type: String},
     tokenSeed: {type: String, unique: true, default: ''},
+
+    //adding group here so that we know what users belong to what groups. 
+    // group: {type: String, unqique: false, default: null}
 });
 
 // INSTANCE METHODS
@@ -28,9 +31,9 @@ userSchema.methods.passwordCompare = function(password){
 };
 
 userSchema.methods.tokenCreate    = function(){
-  
+
     this.tokenSeed = randomBytes(32).toString('base64');
-  
+
     return this.save()
         .then(user => {
             return jwt.sign({tokenSeed: this.tokenSeed}, process.env.SECRET);
@@ -38,7 +41,7 @@ userSchema.methods.tokenCreate    = function(){
         .then(token => {
             return token;
         });
-    
+
 };
 
 // MODEL
@@ -46,7 +49,7 @@ const User = Mongoose.model('user', userSchema);
 
 // STATIC METHODS
 User.createFromSignup = function (user) {
-  
+
     if(!user.password || !user.email || !user.username) {
         return Promise.reject( createError(400, 'VALIDATION ERROR: missing username email or password ') );
     }
@@ -59,31 +62,15 @@ User.createFromSignup = function (user) {
             let data = Object.assign({}, user, {passwordHash});
             return new User(data).save();
         });
-    
+
 };
 
-User.createFromOAuth = function (OAuthUser) { 
-  
-  /* 
-      Google User Object: 
-      { kind: 'plus#personOpenIdConnect',
-      gender: 'male',
-      sub: '117393462759043938336',
-      name: 'John Cokos',
-      given_name: 'John',
-      family_name: 'Cokos',
-      profile: 'https://plus.google.com/117393462759043938336',
-      picture: 'https://lh3.googleusercontent.com/-vBtnARGbFww/AAAAAAAAAAI/AAAAAAAAAAA/USr3VMUfUMU/photo.jpg?sz=50',
-      email: 'highlander.44@gmail.com',
-      email_verified: 'true',
-      locale: 'en' }
-  
-  */
-  
+User.createFromOAuth = function (OAuthUser) {
+
   if ( ! OAuthUser || ! OAuthUser.email ) {
       return Promise.reject( createError(400, 'VALIDATION ERROR: missing username email or password ') );
   }
-  
+
   return User.findOne({email:OAuthUser.email})
       .then(user => {
           if ( ! user ) { throw new Error ("User Not Found"); }
@@ -101,8 +88,8 @@ User.createFromOAuth = function (OAuthUser) {
               email: OAuthUser.email
           }).save();
       })
-  
-    
+
+
 };
 // INTERFACE
 export default User;
