@@ -1,3 +1,3 @@
 import * as server from './lib/server.js'
 
-server.start()
+server.start(process.env.PORT)
