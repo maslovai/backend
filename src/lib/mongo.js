@@ -2,10 +2,10 @@
 
 // DEPENDENCIES
 const mongoose = require('mongoose')
-mongoose.Promise = Promise 
+mongoose.Promise = Promise
 
 // STATE
-const state = { 
+const state = {
   isOn: false,
   config: {
     useMongoClient: true,
@@ -29,7 +29,7 @@ export const stop = () => {
     return Promise.reject(new Error('USER ERROR: db is disconnected'))
   return mongoose.disconnect()
   .then(() => {
-    state.isOn = false 
+    state.isOn = false
     console.log('__MONGO_DISCONNECTED__')
   })
 }

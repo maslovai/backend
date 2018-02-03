@@ -1,10 +1,27 @@
 import express from 'express';
-import Task from '../model/task.js';
+import Queue from '../model/queue.js';
 import bodyParser from 'body-parser';
 import bearer from '../middleware/bearer-auth.js';
 import superagent from 'superagent';
 
 const taskRouter = module.exports = express.Router();
+
+taskRouter.get('/queue', (req, res, next) => {
+  //get a list of tasks for the group
+})
+
+taskRouter.post('/queue', (req, res, next) => {
+  //post a new task
+})
+
+taskRouter.put('/queue', (req, res, next) => {
+  //update a task as completed/not completed
+  //completed tasks get the user_ID in completedBy
+  //uncompleted tasks have the user_ID removed.
+  //each task belongs to the group from which the user is posting.
+
+
+})
 
 /*
 
