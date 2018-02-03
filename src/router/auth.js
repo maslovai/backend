@@ -48,32 +48,33 @@ export default new Router()
             .catch(next);
     })
     
+ 
      .get('/oauth/google/code', (req, res, next) => {
-         console.log('HELLLLLLLLLLLLLLLLLLLLLO')
         let code = req.query.code;
-      
+  
         console.log('(1) code', code);
-        console.log('redirect uri is ', process.env.API_URL + '/oauth/google/code')
         
-        let stuff = {
-            code: code,
-            client_id: process.env.GOOGLE_CLIENT_ID,
-            client_secret: process.env.GOOGLE_CLIENT_SECRET,
-            redirect_uri: `${process.env.API_URL}/oauth/google/code`,
-            grant_type: 'authorization_code'
-        }
-        console.log('stuff is ', stuff)
         // exchange the code or a token
         superagent.post('https://www.googleapis.com/oauth2/v4/token')
             .type('form')
-            .send(
-                stuff
-                // code: code,
-                // client_id: process.env.GOOGLE_CLIENT_ID,
-                // client_secret: process.env.GOOGLE_CLIENT_SECRET,
-                // redirect_uri: `${process.env.API_URL}/oauth/google/code`,
-                // grant_type: 'authorization_code'
-            )
+            .send({
+                code: code,
+                client_id: process.env.GOOGLE_CLIENT_ID,
+                client_secret: process.env.GOOGLE_CLIENT_SECRET,
+                redirect_uri: `${process.env.API_URL}/oauth/google/code`,
+                grant_type: 'authorization_code'
+            })   
+        
+        // exchange the code or a token
+        superagent.post('https://www.googleapis.com/oauth2/v4/token')
+            .type('form')
+            .send({
+               code: code,
+               client_id: process.env.GOOGLE_CLIENT_ID,
+               client_secret: process.env.GOOGLE_CLIENT_SECRET,
+               redirect_uri: `${process.env.API_URL}/oauth/google/code`,
+               grant_type: 'authorization_code'
+            })
             .then( response => {
                 let googleToken = response.body.access_token;
                 console.log("(2) google token", googleToken); 
@@ -96,7 +97,6 @@ export default new Router()
                 return user.tokenCreate();
             })
             .then ( token => {
-                console.log('setting cookie')
                 res.cookie('X-BBB-Token', token, {domain:process.env.COOKIE_DOMAIN});
                 res.redirect(URL);
             }) 

@@ -14,9 +14,7 @@ const userSchema =    new Schema({
     username: {type: String, required: true, unique: true},
     passwordHash: {type: String},
     tokenSeed: {type: String, unique: true, default: ''},
-
-    //adding group here so that we know what users belong to what groups. 
-    // group: {type: String, unqique: false, default: null}
+    group_IDs: {type: Array}
 });
 
 // INSTANCE METHODS
@@ -89,7 +87,7 @@ User.createFromOAuth = function (OAuthUser) {
           }).save();
       })
 
-
 };
+
 // INTERFACE
 export default User;

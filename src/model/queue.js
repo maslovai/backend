@@ -2,8 +2,16 @@
 
 const mongoose = require('mongoose');
 
-const tasksSchema = mongoose.Schema({
-  group: {type: String, unique: true, required: true}
-  task:{type: String, required: true}
-  completed: {type: Boolean, required: true}
+const queueSchema = mongoose.Schema({
+  task:{type: String, required: true},
+  group_ID: {type: String, required: true},
+  completed: {type: Boolean, default: false},
+  completedBy: {type: number, required: false},
+  createDate: {type: Date, default: Date.now}
+
 })
+
+const Queue = Mongoose.model('queue',queueSchema);
+
+export default Queue;
+
