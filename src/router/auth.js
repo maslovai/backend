@@ -53,6 +53,7 @@ export default new Router()
         let code = req.query.code;
       
         console.log('(1) code', code);
+        console.log('redirect uri is ', process.env.API_URL + 'oauth/google/code')
         
         // exchange the code or a token
         superagent.post('https://www.googleapis.com/oauth2/v4/token')
