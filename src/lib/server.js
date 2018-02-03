@@ -28,8 +28,8 @@ app.use(morgan('dev'))
 
 // routers
 
-//app.use(userRouter)
-//app.use(authRouter)
+app.use(userRouter)
+app.use(authRouter)
 
 
 
