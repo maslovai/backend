@@ -10,12 +10,14 @@ const userRouter = module.exports = express.Router();
 
 userRouter.get('/user', bearer, (req, res, next) => {
   let user = req.user;
-  if (user) res.send(user);  
+  if (user) res.send(user);
   else next();
 })
 
+//Can we can use this route to update any of our user information.
+//   we should be able to add
 userRouter.put('/user', bearer, bodyParser.json(), (req, res, next) => {
- 
+
   console.log('req.user is ', req.user);
   if(!req.user) next(400)
   let user = req.user;
@@ -30,4 +32,3 @@ userRouter.put('/user', bearer, bodyParser.json(), (req, res, next) => {
     })
     .catch(next);
 })
-
