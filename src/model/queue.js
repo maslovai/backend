@@ -14,3 +14,4 @@ const queueSchema = mongoose.Schema({
 const Queue = Mongoose.model('queue',queueSchema);
 
 export default Queue;
+

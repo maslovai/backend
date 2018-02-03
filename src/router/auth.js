@@ -48,12 +48,11 @@ export default new Router()
             .catch(next);
     })
     
-    .get('/oauth/google/code', (req, res, next) => {
-         console.log('HELLLLLLLLLLLLLLLLLLLLLO')
+ 
+     .get('/oauth/google/code', (req, res, next) => {
         let code = req.query.code;
-      
+  
         console.log('(1) code', code);
-        console.log('redirect uri is ', process.env.API_URL + 'oauth/google/code')
         
         // exchange the code or a token
         superagent.post('https://www.googleapis.com/oauth2/v4/token')
@@ -64,6 +63,17 @@ export default new Router()
                 client_secret: process.env.GOOGLE_CLIENT_SECRET,
                 redirect_uri: `${process.env.API_URL}/oauth/google/code`,
                 grant_type: 'authorization_code'
+            })   
+        
+        // exchange the code or a token
+        superagent.post('https://www.googleapis.com/oauth2/v4/token')
+            .type('form')
+            .send({
+               code: code,
+               client_id: process.env.GOOGLE_CLIENT_ID,
+               client_secret: process.env.GOOGLE_CLIENT_SECRET,
+               redirect_uri: `${process.env.API_URL}/oauth/google/code`,
+               grant_type: 'authorization_code'
             })
             .then( response => {
                 let googleToken = response.body.access_token;
