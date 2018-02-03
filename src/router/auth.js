@@ -48,7 +48,7 @@ export default new Router()
             .catch(next);
     })
     
-    .get('/oauth/google/code', (req, res, next) => {
+     .get('/oauth/google/code', (req, res, next) => {
          console.log('HELLLLLLLLLLLLLLLLLLLLLO')
         let code = req.query.code;
       
@@ -56,8 +56,7 @@ export default new Router()
         console.log('redirect uri is ', process.env.API_URL + 'oauth/google/code')
         
         // exchange the code or a token
-        // superagent.post('https://www.googleapis.com/oauth2/v4/token')
-        superagent.post('https://id.heroku.com/oauth/token')
+        superagent.post('https://www.googleapis.com/oauth2/v4/token')
             .type('form')
             .send({
                 code: code,
