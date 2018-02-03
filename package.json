@@ -1,39 +1,45 @@
 {
-  "name": "backend",
+  "name": "task-off",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
+  "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint .",
+    "start": "node index.js",
+    "watch": "nodemon index.js",
+    "test": "jest --runInBand",
+    "test-watch": "jest --watch --runInBand",
+    "mongo-on": "mkdir -p ./db && mongod --dbpath ./db --smallfiles",
+    "mongo-off": "killall mongod"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Task-Off/backend.git"
   },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Task-Off/backend/issues"
-  },
-  "homepage": "https://github.com/Task-Off/backend#readme",
+  "author": "rowen, cole, paula, iryna",
   "dependencies": {
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.6.1",
-    "babel-register": "^6.26.0",
-    "bcrypt": "^1.0.3",
-    "bluebird": "^3.5.1",
-    "body-parser": "^1.18.2",
+    "babel-register": "^6.24.1",
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.17.2",
     "cors": "^2.8.4",
-    "dotenv": "^5.0.0",
-    "express": "^4.16.2",
-    "faker": "^4.1.0",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.3",
     "http-errors": "^1.6.2",
-    "jest": "^22.1.4",
-    "jsonwebtoken": "^8.1.1",
-    "mongoose": "^5.0.3",
-    "morgan": "^1.9.0",
-    "nodemon": "^1.14.11",
-    "socket.io": "^2.0.4",
-    "superagent": "^3.8.2"
+    "jsonwebtoken": "^7.4.3",
+    "lodash": "^4.17.4",
+    "mongoose": "^4.13.10",
+    "morgan": "^1.8.2",
+    "socket.io": "^2.0.3",
+    "superagent": "^3.5.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "faker": "^4.1.0",
+    "jest": "^20.0.4",
+    "live-server": "^1.2.0",
+    "nodemon": "^1.14.12"
   }
 }

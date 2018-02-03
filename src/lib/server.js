@@ -7,21 +7,31 @@ import express from 'express'
 import * as mongo from './mongo.js'
 
 import authRouter from '../router/auth.js'
+import userRouter from '../router/user.js'
 import fourOhFour from '../middleware/four-oh-four.js'
 import errorHandler from '../middleware/error-middleware.js'
 
 // STATE
 const app = express()
 
+app.use('*', (req, res, next) => {
+  res.header('Access-Control-Allow-Headers', 'Origin, Authorization, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Credentials',  true);
+  req.header('Access-Control-Request-Headers', 'Authorization, Content-Type')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD');
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 // global middleware
 app.use(morgan('dev'))
-app.use(cors({
-  origin: process.env.CORS_ORIGINS.split(' '),
-  credentials: true,
-}))
 
 // routers
+
+app.use(userRouter)
 app.use(authRouter)
+
+
 
 // handle errors
 app.use(fourOhFour)
