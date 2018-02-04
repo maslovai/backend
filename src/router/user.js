@@ -8,6 +8,12 @@ import superagent from 'superagent';
 
 const userRouter = module.exports = express.Router();
 
+userRouter.get('/user', bearer, (req, res, next) => {
+  let user = req.user;
+  if (user) res.send(user);
+  else next();
+})
+
 //this route returns the entire user, so it also contains group_IDs
 userRouter.get('/user/:id', bearer, (req, res, next) => {
   let id = req.params._id;
