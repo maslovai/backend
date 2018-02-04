@@ -15,7 +15,6 @@ export default new Router()
     // TODO: These can go here to get things wired up, but probably belong in a different route that's just for user data
 
     .post('/signup', bodyParser.json() , (req, res, next) => {
-        console.log('hiiiiiii?')
         new User.createFromSignup(req.body)
             .then(user => user.tokenCreate())
             .then(token => {
