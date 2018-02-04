@@ -9,6 +9,7 @@ import superagent from 'superagent';
 const userRouter = module.exports = express.Router();
 
 userRouter.get('/user', bearer, (req, res, next) => {
+  console.log('YOOOO')
   let user = req.user;
   if (user) res.send(user);
   else next();
