@@ -1,20 +1,37 @@
+'use strict'
+
 import express from 'express';
-import Queue from '../model/queue.js';
+import Task from '../model/task.js';
 import bodyParser from 'body-parser';
 import bearer from '../middleware/bearer-auth.js';
 import superagent from 'superagent';
+import Group from '../model/group.js'
 
 const taskRouter = module.exports = express.Router();
 
-taskRouter.get('/queue', (req, res, next) => {
+taskRouter.get('/task', bearer, bodyParser, (req, res, next) => {
   //get a list of tasks for the group
+  let query = { 
+    group_ID: req.body.id, 
+    completed: {$eq: false}
+  };
+  Task.find(query)
+    .then( tasks => res.send(tasks) )
+    .catch(next)
 })
 
-taskRouter.post('/queue', bearer, (req, res, next) => {
+taskRouter.post('/task', bearer, bodyParser, (req, res, next) => {
   //post a new task
+  task = new Task({
+    name: req.body.name,
+    group_ID: req.body.group_ID
+  })
+  task.save()
+    .then( task => res.send(task) )
+    .catch(next)
 })
 
-taskRouter.put('/queue', bearer, (req, res, next) => {
+taskRouter.put('/task', bearer, (req, res, next) => {
   //update a task as completed/not completed
   //completed tasks get the user_ID in completedBy
   //uncompleted tasks have the user_ID removed.
