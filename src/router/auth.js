@@ -20,7 +20,6 @@ export default new Router()
             .then(token => {
                 res.cookie('X-BBB-Token', token, {domain:process.env.COOKIE_DOMAIN});
                 res.send(token);
-                console.log('ello!')
             })
             .catch(next);
     })
@@ -80,7 +79,7 @@ export default new Router()
                 return googleToken;
             })
             // use the token to get a user
-            .then ( token => {
+            .then (token => {
                 return superagent.get('https://www.googleapis.com/plus/v1/people/me/openIdConnect')
                     .set('Authorization', `Bearer ${token}`)
                     .then (response => {
@@ -92,18 +91,16 @@ export default new Router()
             .then(googleUser => {
                 return User.createFromOAuth(googleUser);
             })
-            .then ( user => {                
+            .then (user => { 
                 return user.tokenCreate();
             })
-            .then ( token => {
-                res.cookie('X-BBB-Token', token, {domain:process.env.COOKIE_DOMAIN});
+            .then(token => {
+                res.cookie('X-BBB-Token', token);
                 res.redirect(URL);
             }) 
             .catch( error => {
-                console.error(error);
-                res.redirect(URL);
+                console.error(error);    
             });
         
-    })
+    });
         
-;
