@@ -1,3 +1,5 @@
+'use strict'
+
 import express from 'express';
 import Group from '../model/group.js';
 import bodyParser from 'body-parser';
