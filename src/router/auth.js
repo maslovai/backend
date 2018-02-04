@@ -15,12 +15,12 @@ export default new Router()
     // TODO: These can go here to get things wired up, but probably belong in a different route that's just for user data
 
     .post('/signup', bodyParser.json() , (req, res, next) => {
-        
         new User.createFromSignup(req.body)
             .then(user => user.tokenCreate())
             .then(token => {
                 res.cookie('X-BBB-Token', token, {domain:process.env.COOKIE_DOMAIN});
                 res.send(token);
+                console.log('ello!')
             })
             .catch(next);
     })
@@ -47,10 +47,15 @@ export default new Router()
             .catch(next);
     })
     
+<<<<<<< HEAD
     .get('/oauth/google/code', (req, res, next) => {
         console.log('(1) code:::::::')
+=======
+ 
+     .get('/oauth/google/code', (req, res, next) => {
+>>>>>>> a8fda0857ab6743eb10c2b4adae3ace4a1fbd3bb
         let code = req.query.code;
-      
+  
         console.log('(1) code', code);
         
         // exchange the code or a token
@@ -62,6 +67,17 @@ export default new Router()
                 client_secret: process.env.GOOGLE_CLIENT_SECRET,
                 redirect_uri: `${process.env.API_URL}/oauth/google/code`,
                 grant_type: 'authorization_code'
+            })   
+        
+        // exchange the code or a token
+        superagent.post('https://www.googleapis.com/oauth2/v4/token')
+            .type('form')
+            .send({
+               code: code,
+               client_id: process.env.GOOGLE_CLIENT_ID,
+               client_secret: process.env.GOOGLE_CLIENT_SECRET,
+               redirect_uri: `${process.env.API_URL}/oauth/google/code`,
+               grant_type: 'authorization_code'
             })
             .then( response => {
                 let googleToken = response.body.access_token;

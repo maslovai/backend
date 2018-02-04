@@ -10,12 +10,35 @@ const userRouter = module.exports = express.Router();
 
 userRouter.get('/user', bearer, (req, res, next) => {
   let user = req.user;
-  if (user) res.send(user);  
+  if (user) res.send(user);
   else next();
 })
 
+//this route returns the entire user, so it also contains group_IDs
+userRouter.get('/user/:id', bearer, (req, res, next) => {
+  let id = req.params._id;
+
+  User.findOne({_id: id})
+    .then(user => {
+      if(user) res.send(user.group_IDs);  
+      else res.send('');
+    })
+  .catch(next);
+})
+
+
+//create route for adding a group_ID to the user
+userRouter.put('/user/:group', bearer, (req, res, next) => {
+  //add a group ID to the user's list of IDs.
+  //the ID comes from req.id
+  //use User.findOneAndUpdate()
+
+})
+
+
+//Can we can use this route to update any of our user information.
 userRouter.put('/user', bearer, bodyParser.json(), (req, res, next) => {
- 
+
   console.log('req.user is ', req.user);
   if(!req.user) next(400)
   let user = req.user;
@@ -30,4 +53,3 @@ userRouter.put('/user', bearer, bodyParser.json(), (req, res, next) => {
     })
     .catch(next);
 })
-

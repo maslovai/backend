@@ -23,7 +23,7 @@ app.use('*', (req, res, next) => {
   res.header('Access-Control-Allow-Credentials',  true);
   req.header('Access-Control-Request-Headers', 'Authorization, Content-Type')
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD');
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+  res.header('Access-Control-Allow-Origin', '*');
   next();
 });
 
@@ -31,8 +31,10 @@ app.use('*', (req, res, next) => {
 app.use(morgan('dev'))
 
 // routers
+
 app.use(userRouter)
 app.use(authRouter)
+
 
 
 // handle errors
@@ -40,14 +42,14 @@ app.use(fourOhFour)
 app.use(errorHandler)
 
 const state = {
-  isOn: false, 
+  isOn: false,
   http: null,
 }
 
-// INTERFACE 
+// INTERFACE
 export const start = (port) => {
   return new Promise((resolve, reject) => {
-    if (state.isOn) 
+    if (state.isOn)
       return reject(new Error('USAGE ERROR: the state is on'))
     state.isOn = true
     mongo.start()
