@@ -32,6 +32,7 @@
     "lodash": "^4.17.4",
     "mongoose": "^4.13.10",
     "morgan": "^1.8.2",
+    "namor": "^1.0.1",
     "socket.io": "^2.0.3",
     "superagent": "^3.5.2"
   },
