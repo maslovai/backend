@@ -7,7 +7,7 @@
 //the front end will check for the existence of req.subdomains to determine
 //what to render. 
 
-export default (req, res, next) {
+export default (req, res, next) =>{
   if (!req.subdomains.length || req.subdomains.slice(-1)[0] === 'www') return next();
   // otherwise we have subdomain here
   var subdomain = req.subdomains.slice(-1)[0];
