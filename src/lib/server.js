@@ -8,6 +8,7 @@ import * as mongo from './mongo.js'
 
 import authRouter from '../router/auth.js'
 import userRouter from '../router/user.js'
+import groupRouter from '../router/group.js'
 import taskRouter from '../router/task.js'
 import fourOhFour from '../middleware/four-oh-four.js'
 import errorHandler from '../middleware/error-middleware.js'
@@ -31,6 +32,7 @@ app.use(morgan('dev'))
 
 app.use(userRouter)
 app.use(authRouter)
+app.use(groupRouter)
 app.use(taskRouter)
 
 

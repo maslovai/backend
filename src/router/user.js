@@ -2,6 +2,7 @@
 
 import express from 'express';
 import User from '../model/user.js';
+import Group from '../model/group.js';
 import bodyParser from 'body-parser';
 import bearer from '../middleware/bearer-auth.js';
 import superagent from 'superagent';
@@ -29,11 +30,30 @@ userRouter.get('/user/:id', bearer, (req, res, next) => {
 
 
 //create route for adding a group_ID to the user
-userRouter.put('/user/:group', bearer, (req, res, next) => {
-  //add a group ID to the user's list of IDs.
-  //the ID comes from req.id
-  //use User.findOneAndUpdate()
+userRouter.put('/user/:alias', bearer, bodyParser.json(), (req, res, next) => {
+  //add a group ID and group name to the user's list of IDs and names.
+  //the group is identified by alias, in the request param
+  //if group exists, search for user and update user. 
+  //Return user or return false if no group exists
+  let userID = req.body.id;
+  console.log('req.body is ', req.body)
+  let alias = req.params.alias;
 
+  Group.findOne({alias: alias})
+    .then(group => {
+      if(group) {
+        User.findById(userID)
+          .then(user => {
+            user.group_IDs.push(group._id);
+            user.groupNames.push(group.name);
+            return user.save();
+          })
+          .then(res.send(user))
+      } else {
+        res.send({noGroupExists: true})
+      }
+    })
+    .catch(next);
 })
 
 

@@ -92,6 +92,7 @@ export default new Router()
                 return User.createFromOAuth(googleUser);
             })
             .then (user => { 
+                console.log('user in server is ', user)
                 return user.tokenCreate();
             })
             .then(token => {
