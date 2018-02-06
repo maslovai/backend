@@ -5,7 +5,7 @@ import Task from '../model/task.js';
 import bodyParser from 'body-parser';
 // import bearer from '../middleware/bearer-auth.js';
 // import superagent from 'superagent';
-import Group from '../model/groups.js'
+import Group from '../model/group.js'
 
 const taskRouter = module.exports = express.Router();
 
