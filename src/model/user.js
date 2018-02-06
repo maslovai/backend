@@ -15,7 +15,8 @@ const userSchema =    new Schema({
     passwordHash: {type: String},
     tokenSeed: {type: String, unique: true, default: ''},
     group_IDs: {type: Array},
-    groupNames: {type: Array}
+    groupNames: {type: Array},
+    completedTasks: {type: Array}
 });
 
 // INSTANCE METHODS
@@ -29,10 +30,10 @@ userSchema.methods.passwordCompare = function(password){
         });
 };
 
-userSchema.methods.tokenCreate    = function(){
+userSchema.methods.tokenCreate = function(){
 
     this.tokenSeed = randomBytes(32).toString('base64');
-
+    console.log('token ', this.tokenSeed)
     return this.save()
         .then(user => {
             return jwt.sign({tokenSeed: this.tokenSeed}, process.env.SECRET);
