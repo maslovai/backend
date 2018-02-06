@@ -35,12 +35,12 @@ groupRouter.put('/group', bearer, bodyParser.json(), (req, res, next) => {
     .catch(next)
 })
 
-//get the groups for a user, by user.group_IDs
-groupRouter.get('/groups/:userID', bearer, (req, res, next) => {
+// //get the groups for a user, by user.group_IDs
+// groupRouter.get('/groups/:userID', bearer, (req, res, next) => {
     
-  let userID = req.params;
+//   let userID = req.params;
 
-    User.findById(userID)
-      .then(user => res.send(user.groupNames))
-      .catch(next); 
-})
+//     User.findById(userID)
+//       .then(user => res.send(user.groupNames))
+//       .catch(next); 
+// })
