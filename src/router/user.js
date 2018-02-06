@@ -22,18 +22,17 @@ userRouter.get('/user/:id', bearer, (req, res, next) => {
 
   User.findOne({_id: id})
     .then(user => {
-      if(user) res.send(user.group_IDs);  
+      if(user) res.send(user.group_IDs);
       else res.send('');
     })
   .catch(next);
 })
 
-
-//create route for adding a group_ID to the user
+//create route for adding a group_ID to the user & adding user_ID to group.
 userRouter.put('/user/:alias', bearer, bodyParser.json(), (req, res, next) => {
   //add a group ID and group name to the user's list of IDs and names.
   //the group is identified by alias, in the request param
-  //if group exists, search for user and update user. 
+  //if group exists, search for user and update user.
   //Return user or return false if no group exists
   let userID = req.body.id;
   console.log('req.body is ', req.body)
@@ -42,6 +41,8 @@ userRouter.put('/user/:alias', bearer, bodyParser.json(), (req, res, next) => {
   Group.findOne({alias: alias})
     .then(group => {
       if(group) {
+        group.user_IDs.push(userID)
+        group.save();
         User.findById(userID)
           .then(user => {
             user.group_IDs.push(group._id);
