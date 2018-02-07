@@ -12,12 +12,13 @@ const taskRouter = module.exports = express.Router();
 
 //get a list of tasks by groupID
 taskRouter.get('/tasks/:groupID', (req, res, next) => {
-  
+
   if(!req.params.groupID) next(400);
 
-  Group.findById(req.params.groupID)
-    .then( group => {
-      if(group) res.send(group.tasks); 
+  Task.find({group_ID: req.params.groupID})
+    .then( tasks => {
+      console.log('group tasks are ',tasks)
+      if(tasks) res.send(tasks); 
     })
     .catch(next)
 })
@@ -37,13 +38,12 @@ taskRouter.get('/tasks/:groupID', (req, res, next) => {
 taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
   
   //post a new task
-  console.log('in task router post:::', req.body)
   let task = new Task({
     "name": req.body.name,
-    // group_ID: req.body.group_ID
+     "group_ID": req.body.group_ID
   })
   task.save()
-    .then( task => res.send(task) )
+    .then( task => res.send(task))
     .catch(next)
 })
 
