@@ -56,7 +56,7 @@ groupRouter.put('/group:??', bearer, bodyParser.json(), (req, res, next) => {
 
     return table;
 
-}
+})
 
 
 // //get the groups for a user, by user.group_IDs

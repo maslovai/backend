@@ -2,6 +2,7 @@
 
 import express from 'express';
 import Task from '../model/task.js';
+import User from '../model/user';
 import bodyParser from 'body-parser';
 // import bearer from '../middleware/bearer-auth.js';
 // import superagent from 'superagent';
@@ -47,16 +48,6 @@ taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
   task.save()
     .then(task => res.send(task))
     .catch(next)
-
-  //adding task to completed task array.
-  User.find({_id:req.body.user._id})
-    .then(user => {
-      if(user){
-        user.completed.push(task)
-        return user.save()
-      }
-    })
-
   //update task in group array??
   //is group array needed if we can search in tasks for groupID and return
   //an array?
@@ -64,27 +55,51 @@ taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
 })
 
 taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
-  console.log('in put task router: params.id::::', req.params.id)
+  console.log('in put task router: req.body::::', req.body);
+
+  let task = new Task({
+    "name": req.body.name,
+    "group_ID": req.body.group_ID
+  })
+
+  //adding task to completed task array in user model
+  
+  if (req.body.completed){
+    User.findOne({_id:req.body.completedBy})
+        .then(user => {
+          if(user){
+            // user.completedTasks.push()
+            Object.assign(user, {completedTasks:[...user.completedTasks, req.body._id]});
+            user.save();
+            console.log('user model after updating::::', user)
+          }
+        })
+        .catch(err => console.log(err))
+  } else {
+    User.findOne({_id:req.body.completedBy})
+        .then(user => {
+          if(user){
+            user.completedTasks = user.completedTasks.filter(id => {return id!==req.body._id})
+            user.save();
+            console.log('user model after updating::::', user)
+          }
+        })
+        .catch(err => console.log(err))
+  }
+  
+
+        
+ //updating task
   Task.findOne({_id:req.params.id})
     .then( task => {
       console.log('task found:', task.name, 'req.body:::', req.body)
       Object.assign(task, req.body);
-      return task.save()
-    })
-    .then( task => res.send(task) )
+      task.save();
+      res.send(task)
+    })  
     .catch(next);
-
-  if(req.body.completed){
-    //if completed
-      //add to user's list of completed tasks
-      //update task in group's task list.
-
-  }else if (!req.body.completed){
-    //if not completed
-      //remove from user's list of completed tasks
-      //update task in group's task list.
-
-  }
+  //remove from user's list of completed tasks
+  
 })
 
 taskRouter.delete('/task/:id',   (req, res, next) => {
