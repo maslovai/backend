@@ -56,13 +56,22 @@ taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
 
 taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
   // console.log('in put task router: req.body::::', req.body);
-
   let task = new Task({
     "name": req.body.name,
     "group_ID": req.body.group_ID
   })
+   //updating task
+   Task.findOne({_id:req.params.id})
+   .then( task => {
+     // console.log('task found:', task.name, 'req.body:::', req.body)
+     Object.assign(task, req.body);
+     task.save();
+     res.send(task)
+   })  
+   .catch(next); 
+})
 
-  //adding task to completed task array in user model
+  //adding checked task to completed tasks array in user model
   if (req.body.completed){
     User.findOne({_id:req.body.completedBy})
         .then(user => {
@@ -74,7 +83,7 @@ taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
         })
         .catch(err => console.log(err))
   } else {
-    //removing unchecked task from user's model
+    //removing unchecked tasks from completed tasks array in user model
     User.findOne({_id:req.body.completedBy})
         .then(user => {
           if(user){
@@ -86,32 +95,26 @@ taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
         })
         .catch(err => console.log(err))
   }
-     
- //updating task
-  Task.findOne({_id:req.params.id})
-    .then( task => {
-      // console.log('task found:', task.name, 'req.body:::', req.body)
-      Object.assign(task, req.body);
-      task.save();
-      res.send(task)
-    })  
-    .catch(next);
-  
-})
 
+  
 taskRouter.delete('/task/:id',   (req, res, next) => {
     // console.log('in delete task router: req.body, id::::', req.params._id)
+
+    //delete a task
     Task.remove({_id:req.params.id})
      .then(()=>res.send('success!'))
      .catch(next)
 
-    //if task is deleted, delete from all user's lists of completed tasks.
+    //if task is deleted, delete from all user's lists of completed tasks
     User.find({})
-        .then( user => user.forEach(element => {
+        .then(user => user.forEach(element => {
           element.completedTasks = element.completedTasks.filter(id => {return id!==req.params._id})
           element.save();
           console.log('user model after delete task::::', user)
-        })  )
-        .catch(err => console.log(err))
-    //remove task from group task list   
+        }))
+        .catch(err => console.log(err))  
 })
+
+
+
+//remove task from group task list    - not doing this one, right?
