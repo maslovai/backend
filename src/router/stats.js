@@ -14,7 +14,7 @@ const statsRouter = module.exports = express.Router();
 statsRouter.get('/stats/:id', bearer, bodyParser.json(), (req, res, next) => {
   let table = []
 
-  Group.find({id: req.body.group_ID})
+  Group.find({id: req.params.id})
     .then(group => {
       group.user_ID.map(userID => {
         table.push({_id: userID})
@@ -28,7 +28,6 @@ statsRouter.get('/stats/:id', bearer, bodyParser.json(), (req, res, next) => {
           table[i].completed = user.completed;
         })
     })
-
-    return table;
+  res.send(table);
 
 }
