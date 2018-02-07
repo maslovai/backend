@@ -31,16 +31,18 @@ taskRouter.get('/task', (req, res, next) => {
 //     .then( tasks => res.send(tasks) )
 //     .catch(next)
 // })
+ 
 
 taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
   //post a new task
+  if(!req.body) next(400);
   console.log('in task router post:::', req.body)
   let task = new Task({
     "name": req.body.name,
-    // group_ID: req.body.group_ID
+    "group_ID": req.body.group_ID
   })
   task.save()
-    .then( task => res.send(task) )
+    .then(task => res.send(task))
     .catch(next)
 })
 
