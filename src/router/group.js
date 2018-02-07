@@ -13,12 +13,11 @@ groupRouter.put('/group', bearer, bodyParser.json(), (req, res, next) => {
   //this route accepts a post to create.
   //it needs req.body.name which becomes the name for the new group
   //it needs req.user._id to locate and update the user with the new groupID
-   
   const alias = namor.generate({ words: 3, numbers: 0 });
 
   console.log('req.body in group put is ', req.body);
   let group = new Group({name: req.body.name, alias: alias})
-  
+
   group.save()
     .then( group => {
 
@@ -28,7 +27,7 @@ groupRouter.put('/group', bearer, bodyParser.json(), (req, res, next) => {
             user.group_IDs.push(group._id);
             user.groupNames.push(req.body.name);
             return user.save()
-          } 
+          }
         })
         .then(user => {console.log('user in server is ', user); res.send(user)});
     })
@@ -37,10 +36,10 @@ groupRouter.put('/group', bearer, bodyParser.json(), (req, res, next) => {
 
 // //get the groups for a user, by user.group_IDs
 // groupRouter.get('/groups/:userID', bearer, (req, res, next) => {
-    
+
 //   let userID = req.params;
 
 //     User.findById(userID)
 //       .then(user => res.send(user.groupNames))
-//       .catch(next); 
+//       .catch(next);
 // })
