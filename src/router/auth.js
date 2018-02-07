@@ -93,7 +93,7 @@ export default new Router()
                 return user.tokenCreate();
             })
             .then(token => {
-                res.cookie('X-BBB-Token', token);
+                res.cookie('X-BBB-Token', token, {domain:process.env.COOKIE_DOMAIN});
                 res.redirect(URL);
             }) 
             .catch( error => {
