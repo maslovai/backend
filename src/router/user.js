@@ -35,8 +35,9 @@ userRouter.put('/user/:alias', bearer, bodyParser.json(), (req, res, next) => {
   //if group exists, search for user and update user.
   //Return user or return false if no group exists
   let userID = req.body.id;
-  console.log('req.body is ', req.body)
   let alias = req.params.alias;
+ 
+  console.log('userID is ', userID)
 
   Group.findOne({alias: alias})
     .then(group => {
@@ -47,9 +48,9 @@ userRouter.put('/user/:alias', bearer, bodyParser.json(), (req, res, next) => {
           .then(user => {
             user.group_IDs.push(group._id);
             user.groupNames.push(group.name);
-            return user.save();
+            user.save();
+            res.send(user);
           })
-          .then(res.send(user))
       } else {
         res.send({noGroupExists: true})
       }
@@ -61,7 +62,6 @@ userRouter.put('/user/:alias', bearer, bodyParser.json(), (req, res, next) => {
 //Can we can use this route to update any of our user information.
 userRouter.put('/user', bearer, bodyParser.json(), (req, res, next) => {
 
-  console.log('req.user is ', req.user);
   if(!req.user) next(400)
   let user = req.user;
 
