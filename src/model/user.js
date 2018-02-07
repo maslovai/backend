@@ -16,7 +16,8 @@ const userSchema =    new Schema({
     tokenSeed: {type: String, unique: true, default: ''},
     group_IDs: {type: Array},
     groupNames: {type: Array},
-    completedTasks: {type: Array}
+    completedTasks: {type: Array},
+    initials: {type: String}
 });
 
 // INSTANCE METHODS
