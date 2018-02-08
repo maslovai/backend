@@ -31,18 +31,6 @@ taskRouter.get('/tasks/:groupID', (req, res, next) => {
     .catch(next)
 })
 
-// we don't have group id's yet, so using the above
-// taskRouter.get('/task', bodyParser, (req, res, next) => {
-//   //get a list of tasks for the group
-//   let query = {
-//     group_ID: req.body.id,
-//     completed: {$eq: false}
-//   };
-//   Task.find(query)
-//     .then( tasks => res.send(tasks) )
-//     .catch(next)
-// })
- 
 
 taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
 
@@ -55,7 +43,7 @@ taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
   })
   task.save()
     .then(task => {
-      console.log('NEWLY CREATED TASK::::', task)
+      // console.log('NEWLY CREATED TASK::::', task)
       res.send(task)
     })
     .catch(next)
@@ -100,7 +88,7 @@ taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
             // console.log('use before uncheck:::', user)
             user.completedTasks = user.completedTasks.filter(task => {return task!==req.body._id})
             user.save();
-          //  console.log('user model after unchecking::::', user)
+           console.log('user model after unchecking::::', user)
           }
         })
         .catch(err => console.log(err))
