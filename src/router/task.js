@@ -69,7 +69,6 @@ taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
      res.send(task)
    })  
    .catch(next); 
-})
 
   //adding checked task to completed tasks array in user model
   if (req.body.completed){
@@ -95,7 +94,7 @@ taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
         })
         .catch(err => console.log(err))
   }
-
+})
   
 taskRouter.delete('/task/:id',   (req, res, next) => {
     // console.log('in delete task router: req.body, id::::', req.params._id)
