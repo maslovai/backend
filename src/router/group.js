@@ -103,6 +103,10 @@ groupRouter.delete('/group/:id', (req, res, next) => {
           Group.find(_id: groupID)
           .then(group => {
 
+            //filter out the user from group.user_IDs
+            group.user_IDs = group.user_IDs.filter( id => {return id !==  userID})
+            group.save();
+
             //filter out groupIDs from the user
             user.group_IDs = user.group_IDs.filter( id => {return id!==groupID})
 
