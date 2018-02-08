@@ -47,7 +47,7 @@ groupRouter.put('/group/:groupID', bearer, bodyParser.json(), (req, res, next) =
     })
 
     table.map( userID, i => {
-    /  User.find({_id: userID})
+      User.find({_id: userID})
         .then(user => {
           table[i].name = user.username;
           table[i].completed = user.completed;
