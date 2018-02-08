@@ -18,6 +18,7 @@ const userSchema =    new Schema({
     groupNames: {type: Array},
     completedTasks: {type: Array},
     initials: {type: String}
+    
 });
 
 // INSTANCE METHODS
