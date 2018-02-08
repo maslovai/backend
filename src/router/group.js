@@ -3,14 +3,15 @@ import bodyParser from 'body-parser';
 import bearer from '../middleware/bearer-auth.js';
 import superagent from 'superagent';
 import User from '../model/user.js'
+import Task from '../model/task.js'
 import Group from '../model/group.js';
 import namor from 'namor';
 
 const groupRouter = module.exports = express.Router();
 
 groupRouter.put('/group', bearer, bodyParser.json(), (req, res, next) => {
+  //add createdBy to group and set to user._id
 
-  //this route accepts a post to create.
   //it needs req.body.name which becomes the name for the new group
   //it needs req.user._id to locate and update the user with the new groupID
   const alias = namor.generate({ words: 3, numbers: 0 });
@@ -46,7 +47,7 @@ groupRouter.put('/group/:groupID', bearer, bodyParser.json(), (req, res, next) =
     })
 
     table.map( userID, i => {
-      User.find({_id: userID})
+    /  User.find({_id: userID})
         .then(user => {
           table[i].name = user.username;
           table[i].completed = user.completed;
@@ -54,16 +55,61 @@ groupRouter.put('/group/:groupID', bearer, bodyParser.json(), (req, res, next) =
     })
 
     return table;
-
 })
 
+//unsubs for most users, deletes group for group creator.
+groupRouter.delete('/group/:id', (req, res, next) => {
+    let userID = req.body.id;
+    let groupID = req.params.id;
 
-// //get the groups for a user, by user.group_IDs
-// groupRouter.get('/groups/:userID', bearer, (req, res, next) => {
+    //if the user sending the unsub is the creator...
+    if(group.createdBy == userID){
 
-//   let userID = req.params;
+      //find group to be deleted or unsubscribed
+      Group.find({_id:groupID})
+        .then(group => {
 
-//     User.findById(userID)
-//       .then(user => res.send(user.groupNames))
-//       .catch(next);
-// })
+          //map over userIDs in group to find each user.
+          group.user_IDs.map(user_ID => {
+            User.find({id: userID})
+              .then(user => {
+
+                //filter group name and group id from user
+                user.save();
+              })
+            })
+
+            //remove all tasks associated with group
+            Task.find({group_ID: group._id})
+            .then(tasks => {
+              let toRemove = tasks.filter(task => {return task.group_ID == group._id});
+              toRemove.forEach(task => Task.remove({_id: task._id}));
+            })
+
+            //and finally remove the group itself.
+            Group.remove({_id:req.params.id})
+            .then(()=>res.send('success, group ' + groupID + ' removed.'))
+            .catch(next)
+      })
+
+    //if the user sending the request is NOT the creator of the group...
+  } else if(group.createdBy !== userID){
+
+    //find the user
+      User.find(_id: userID)
+        .then(user => {
+
+          //find the group
+          Group.find(_id: groupID)
+          .then(group => {
+
+            //filter out groupIDs from the user
+            user.group_IDs = user.group_IDs.filter( id => {return id!==groupID})
+
+            //filter out groupNames from the user.
+            user.groupNames = user.groupNames.filter(name => {return name !== group.name})
+            user.save();
+          })
+        })
+    }
+})
