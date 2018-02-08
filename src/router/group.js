@@ -34,6 +34,30 @@ groupRouter.put('/group', bearer, bodyParser.json(), (req, res, next) => {
     .catch(next)
 })
 
+//get an array of objects containing task information for each user
+groupRouter.put('/group/:groupID', bearer, bodyParser.json(), (req, res, next) => {
+  let table = []
+
+  Group.find({_id: req.params.groupID})
+    .then(group => {
+      group.user_ID.map(userID => {
+        table.push({_id: userID})
+      })
+    })
+
+    table.map( userID, i => {
+      User.find({_id: userID})
+        .then(user => {
+          table[i].name = user.username;
+          table[i].completed = user.completed;
+        })
+    })
+
+    return table;
+
+})
+
+
 // //get the groups for a user, by user.group_IDs
 // groupRouter.get('/groups/:userID', bearer, (req, res, next) => {
 

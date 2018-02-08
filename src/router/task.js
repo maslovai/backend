@@ -2,6 +2,7 @@
 
 import express from 'express';
 import Task from '../model/task.js';
+import User from '../model/user';
 import bodyParser from 'body-parser';
 // import bearer from '../middleware/bearer-auth.js';
 // import superagent from 'superagent';
@@ -35,29 +36,20 @@ taskRouter.get('/tasks/:groupID', (req, res, next) => {
 //     .then( tasks => res.send(tasks) )
 //     .catch(next)
 // })
+ 
 
 taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
 
   //post a new task
+  if(!req.body) next(400);
+  console.log('in task router post:::', req.body)
   let task = new Task({
-
     "name": req.body.name,
-     "group_ID": req.body.group_ID
-
+    "group_ID": req.body.group_ID
   })
   task.save()
-    .then( task => res.send(task))
+    .then(task => res.send(task))
     .catch(next)
-
-  //adding task to completed task array.
-  User.find({_id:req.body.user._id})
-    .then(user => {
-      if(user){
-        user.completed.push(task)
-        return user.save()
-      }
-    })
-
   //update task in group array??
   //is group array needed if we can search in tasks for groupID and return
   //an array?
@@ -65,37 +57,65 @@ taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
 })
 
 taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
-  console.log('in put task router: params.id::::', req.params.id)
-  Task.findOne({_id:req.params.id})
-    .then( task => {
-      console.log('task found:', task.name, 'req.body:::', req.body)
-      Object.assign(task, req.body);
-      return task.save()
-    })
-    .then( task => res.send(task) )
-    .catch(next);
+  // console.log('in put task router: req.body::::', req.body);
+  let task = new Task({
+    "name": req.body.name,
+    "group_ID": req.body.group_ID
+  })
+   //updating task
+   Task.findOne({_id:req.params.id})
+   .then( task => {
+     // console.log('task found:', task.name, 'req.body:::', req.body)
+     Object.assign(task, req.body);
+     task.save();
+     res.send(task)
+   })  
+   .catch(next); 
 
-  if(req.body.completed){
-    //if completed
-      //add to user's list of completed tasks
-      //update task in group's task list.
-
-  }else if (!req.body.completed){
-    //if not completed
-      //remove from user's list of completed tasks
-      //update task in group's task list.
-
+  //adding checked task to completed tasks array in user model
+  if (req.body.completed){
+    User.findOne({_id:req.body.completedBy})
+        .then(user => {
+          if(user){
+            Object.assign(user, {completedTasks:[...user.completedTasks, req.body._id]});
+            user.save();
+            // console.log('user model after updating::::', user)
+          }
+        })
+        .catch(err => console.log(err))
+  } else {
+    //removing unchecked tasks from completed tasks array in user model
+    User.findOne({_id:req.body.completedBy})
+        .then(user => {
+          if(user){
+            // console.log('use before uncheck:::', user)
+            user.completedTasks = user.completedTasks.filter(task => {return task!==req.body._id})
+            user.save();
+          //  console.log('user model after unchecking::::', user)
+          }
+        })
+        .catch(err => console.log(err))
   }
 })
-
+  
 taskRouter.delete('/task/:id',   (req, res, next) => {
-    console.log('in delete task router: params, id::::', req.params.id)
+    // console.log('in delete task router: req.body, id::::', req.params._id)
 
+    //delete a task
     Task.remove({_id:req.params.id})
      .then(()=>res.send('success!'))
      .catch(next)
 
-    //remove task from group task list
-    //if task is completed, delete from user's list of completed tasks.
-
+    //if task is deleted, delete from all user's lists of completed tasks
+    User.find({})
+        .then(user => user.forEach(element => {
+          element.completedTasks = element.completedTasks.filter(id => {return id!==req.params._id})
+          element.save();
+          console.log('user model after delete task::::', user)
+        }))
+        .catch(err => console.log(err))  
 })
+
+
+
+//remove task from group task list    - not doing this one, right?
