@@ -94,7 +94,8 @@ export default new Router()
             })
             .then(token => {
                 //remove cookie domain for local use
-                res.cookie('X-BBB-Token', token, {domain:process.env.COOKIE_DOMAIN});
+                res.cookie('X-BBB-Token', token);
+               // res.cookie('X-BBB-Token', token, {domain:process.env.COOKIE_DOMAIN});
                 res.redirect(URL);
             }) 
             .catch( error => {

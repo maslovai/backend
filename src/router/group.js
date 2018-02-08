@@ -9,14 +9,14 @@ import namor from 'namor';
 
 const groupRouter = module.exports = express.Router();
 
-groupRouter.put('/group', bearer, bodyParser.json(), (req, res, next) => {
+groupRouter.post('/group', bearer, bodyParser.json(), (req, res, next) => {
 
   //it needs req.body.name which becomes the name for the new group
   //it needs req.user._id to locate and update the user with the new groupID
   const alias = namor.generate({ words: 3, numbers: 0 });
 
-  console.log('req.body in group put is ', req.body);
-  let group = new Group({name: req.body.name, alias: alias})
+  console.log('req.body in group POST is ', req.body);
+  let group = new Group({name: req.body.name, alias: alias, createdBy: req.body.id})
 
   group.save()
     .then( group => {
@@ -97,7 +97,7 @@ groupRouter.delete('/group/:id', (req, res, next) => {
     //find the user
       User.find(_id: userID)
         .then(user => {
-
+        
           //find the group
           Group.find(_id: groupID)
           .then(group => {
@@ -115,4 +115,14 @@ groupRouter.delete('/group/:id', (req, res, next) => {
           })
         })
     }
+})
+
+// return the createdBy user for a given group
+groupRouter.get('/group/mod/:groupID', (req, res, next) => {
+
+  let groupID = req.params.groupID;
+
+    Group.findById(groupID)
+      .then(group => {console.log('group.CreateBy is: ', group.createdBy); res.send(group.createdBy)})
+      .catch(next);
 })
