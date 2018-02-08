@@ -10,20 +10,24 @@ import superagent from 'superagent';
 
 const statsRouter = module.exports = express.Router();
 
-let userStats = //groupURL
-let userQueue = []
+//get an array of objects containing task information for each user
+statsRouter.get('/stats/:id', bearer, bodyParser.json(), (req, res, next) => {
+  let table = []
 
-Group.find(
-  {_ID: ID })
-  .then(group => {
-    Group.userIDs.map(ID => {
-      userStats.push({_ID: ID })
+  Group.find({id: req.params.id})
+    .then(group => {
+      group.user_ID.map(userID => {
+        table.push({_id: userID})
+      })
     })
-  })
 
-  userStats.forEach(user => {
-    Tasks.find({ completedBy: user._ID })
-    .then(Tasks => {
-
+    table.map( userID, i => {
+      User.find({_id: userID})
+        .then(user => {
+          table[i].name = user.username;
+          table[i].completed = user.completed;
+        })
     })
-  })
+  res.send(table);
+
+}

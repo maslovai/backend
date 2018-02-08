@@ -16,9 +16,11 @@ taskRouter.get('/tasks/:groupID', (req, res, next) => {
 
   if(!req.params.groupID) next(400);
 
-  Group.findById(req.params.groupID)
-    .then( group => {
-      if(group) res.send(group.tasks);
+  Task.find({group_ID: req.params.groupID})
+    .then( tasks => {
+      console.log('group tasks are ',tasks)
+      if(tasks) res.send(tasks); 
+
     })
     .catch(next)
 })
