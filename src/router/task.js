@@ -15,7 +15,6 @@ const taskRouter = module.exports = express.Router();
 taskRouter.get('/tasks/:groupID', (req, res, next) => {
 
   if(!req.params.groupID) next(400);
-
   console.log('req.params is ', req.params.groupID)
   let groupID = req.params.groupID;
   let groupName = '';
@@ -24,11 +23,10 @@ taskRouter.get('/tasks/:groupID', (req, res, next) => {
   Group.findById(groupID)
     .then(group => { console.log('group is ', group); groupName = group.name})
 
-  Task.find({group_ID: req.params.groupID})
+  //Get all the tasks for the requested group
+  Task.find({group_ID: groupID})
     .then( tasks => {
-      console.log('group tasks are ',tasks)
-      if(tasks) res.send(tasks); 
-
+      if(tasks) res.send({tasks, groupName}); 
     })
     .catch(next)
 })
