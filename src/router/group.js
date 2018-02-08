@@ -15,7 +15,7 @@ groupRouter.post('/group', bearer, bodyParser.json(), (req, res, next) => {
   //it needs req.user._id to locate and update the user with the new groupID
   const alias = namor.generate({ words: 3, numbers: 0 });
 
-  console.log('req.body in group put is ', req.body);
+  console.log('req.body in group POST is ', req.body);
   let group = new Group({name: req.body.name, alias: alias, createdBy: req.body.id})
 
   group.save()
@@ -64,6 +64,6 @@ groupRouter.get('/group/mod/:groupID', (req, res, next) => {
   let groupID = req.params.groupID;
 
     Group.findById(groupID)
-      .then(group => res.send(group.createdBy))
+      .then(group => {console.log('group.CreateBy is: ', group.createdBy); res.send(group.createdBy)})
       .catch(next);
 })
