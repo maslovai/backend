@@ -6,7 +6,6 @@ const groupSchema = Mongoose.Schema({
   name: {type: String, required: true},
   alias: {type: String},
   user_IDs: {type: Array}
-
 })
 
 const Group = Mongoose.model('group', groupSchema);

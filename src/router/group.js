@@ -8,7 +8,7 @@ import namor from 'namor';
 
 const groupRouter = module.exports = express.Router();
 
-groupRouter.put('/group', bearer, bodyParser.json(), (req, res, next) => {
+groupRouter.post('/group', bearer, bodyParser.json(), (req, res, next) => {
 
   //this route accepts a post to create.
   //it needs req.body.name which becomes the name for the new group
@@ -16,7 +16,7 @@ groupRouter.put('/group', bearer, bodyParser.json(), (req, res, next) => {
   const alias = namor.generate({ words: 3, numbers: 0 });
 
   console.log('req.body in group put is ', req.body);
-  let group = new Group({name: req.body.name, alias: alias})
+  let group = new Group({name: req.body.name, alias: alias, createdBy: req.body.id})
 
   group.save()
     .then( group => {
@@ -58,12 +58,12 @@ groupRouter.put('/group/:groupID', bearer, bodyParser.json(), (req, res, next) =
 })
 
 
-// //get the groups for a user, by user.group_IDs
-// groupRouter.get('/groups/:userID', bearer, (req, res, next) => {
+// return the createdBy user for a given group
+groupRouter.get('/group/mod/:groupID', (req, res, next) => {
 
-//   let userID = req.params;
+  let groupID = req.params.groupID;
 
-//     User.findById(userID)
-//       .then(user => res.send(user.groupNames))
-//       .catch(next);
-// })
+    Group.findById(groupID)
+      .then(group => res.send(group.createdBy))
+      .catch(next);
+})

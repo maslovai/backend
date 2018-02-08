@@ -15,12 +15,12 @@ const taskRouter = module.exports = express.Router();
 taskRouter.get('/tasks/:groupID', (req, res, next) => {
 
   if(!req.params.groupID) next(400);
+  let groupID = req.params.groupID;
 
-  Task.find({group_ID: req.params.groupID})
+  //Get all the tasks for the requested group
+  Task.find({group_ID: groupID})
     .then( tasks => {
-      console.log('group tasks are ',tasks)
       if(tasks) res.send(tasks); 
-
     })
     .catch(next)
 })
@@ -37,23 +37,26 @@ taskRouter.get('/tasks/:groupID', (req, res, next) => {
 //     .catch(next)
 // })
  
-
+//save a new task
 taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
 
-  //post a new task
   if(!req.body) next(400);
-  console.log('in task router post:::', req.body)
-  let task = new Task({
-    "name": req.body.name,
-    "group_ID": req.body.group_ID
-  })
-  task.save()
+
+  let groupID = req.body.group_ID;
+
+  //First get the group name, to add to task record afterwards
+  Group.findById(groupID)
+    .then(group => {return group.name; })
+    .then(groupName => {
+      let task = new Task({
+        "name": req.body.name,
+        "group_ID": groupID,
+        "groupName": groupName
+      })
+      return task.save();
+    })
     .then(task => res.send(task))
     .catch(next)
-  //update task in group array??
-  //is group array needed if we can search in tasks for groupID and return
-  //an array?
-
 })
 
 taskRouter.put('/task/:id', bodyParser.json(), (req, res, next) => {
