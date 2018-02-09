@@ -20,12 +20,12 @@ groupRouter.post('/group', bearer, bodyParser.json(), (req, res, next) => {
 
   group.save()
     .then( group => {
-
       User.findById(req.body.id)
         .then(user => {
           if(user) {
             user.group_IDs.push(group._id);
             user.groupNames.push(req.body.name);
+            user.groupAliases.push(alias);
             return user.save()
           }
         })
@@ -92,7 +92,10 @@ groupRouter.delete('/group/:id', bearer, bodyParser.json(), (req, res, next) => 
       user.group_IDs = user.group_IDs.filter(id => id === groupID)
       user.save();
       return user;
-    }) 
+    })
+    .then(user => {
+      user.groupAliases = user.groupAliases.filter(alias => alias !== user.groupAliases[index])
+    })
     .then(user => {
       //filter out groupNames from the user by index retrieved from group_IDs.
       user.groupNames = user.groupNames.filter(name => name !== user.groupNames[index])

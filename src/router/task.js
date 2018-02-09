@@ -16,7 +16,7 @@ taskRouter.get('/tasks/:groupID', (req, res, next) => {
 
   if(!req.params.groupID) next(400);
   let groupID = req.params.groupID;
-
+  
   //Get all the tasks for the requested group
   Task.find({group_ID: groupID})
     .then( tasks => {
@@ -24,18 +24,6 @@ taskRouter.get('/tasks/:groupID', (req, res, next) => {
     })
     .catch(next)
 })
-
-// we don't have group id's yet, so using the above
-// taskRouter.get('/task', bodyParser, (req, res, next) => {
-//   //get a list of tasks for the group
-//   let query = {
-//     group_ID: req.body.id,
-//     completed: {$eq: false}
-//   };
-//   Task.find(query)
-//     .then( tasks => res.send(tasks) )
-//     .catch(next)
-// })
  
 //save a new task
 taskRouter.post('/task',  bodyParser.json(), (req, res, next) => {
@@ -118,7 +106,3 @@ taskRouter.delete('/task/:id',   (req, res, next) => {
         }))
         .catch(err => console.log(err))  
 })
-
-
-
-//remove task from group task list    - not doing this one, right?
