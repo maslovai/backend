@@ -4,6 +4,8 @@ import expect from 'expect';
 import mongoose from 'mongoose';
 import Task from '../../src/model/task';
 
+mongoose.connect(process.env.MONGODB_URI, {useMongoClient: true});
+
 const mockTask = {
   "name": "Dishes - do them!",
   "group_ID":"0000"
@@ -19,14 +21,14 @@ describe('Task Model', () => {
     expect(testTask._id).not.toBe('undefined');
   })
   it ('sould save a record to the DB', ()=>{
-    mongoose.connect(process.env.MLAB, {useMongoClient: true});
     testTask.save();
     Task.findOne({_id:id})
     .then(task=>{
         expect(task._id).toEqual(id);
     })
     .catch(console.error)
-    it ('sould remove a record from the DB', ()=>{ 
+   })
+   it ('sould remove a record from the DB', ()=>{ 
         Task.remove({'name':'Dishes - do them!'})
         .then(()=>{
           Task.findOne({_id:id})
@@ -34,9 +36,7 @@ describe('Task Model', () => {
         })
         .catch();
     })
-    mongoose.disconnect();
-  })
 })
 
-
+mongoose.disconnect();
 

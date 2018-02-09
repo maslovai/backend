@@ -7,7 +7,7 @@ const taskSchema = new Schema({
   group_ID: {type: String, required: false},
   completed: {type: Boolean, default: false},
   completedBy: {type: String, required: false},
-  createDate: {type: Date, default: Date.now()}
+  createDate: {type: Date, default: Date.now(), expireAfterSeconds:1000*60*5}
 })
 
 const Task = Mongoose.model('task', taskSchema);
