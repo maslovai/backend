@@ -10,7 +10,6 @@ import namor from 'namor';
 const groupRouter = module.exports = express.Router();
 
 groupRouter.put('/group', bearer, bodyParser.json(), (req, res, next) => {
-  //add createdBy to group and set to user._id
 
   //it needs req.body.name which becomes the name for the new group
   //it needs req.user._id to locate and update the user with the new groupID
@@ -47,7 +46,7 @@ groupRouter.put('/group/:groupID', bearer, bodyParser.json(), (req, res, next) =
     })
 
     table.map( userID, i => {
-    /  User.find({_id: userID})
+      User.find({_id: userID})
         .then(user => {
           table[i].name = user.username;
           table[i].completed = user.completed;
