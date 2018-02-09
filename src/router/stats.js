@@ -21,11 +21,15 @@ statsRouter.get('/stats/:id', bearer, bodyParser.json(), (req, res, next) => {
       })
     })
 
+    // <Piechart x={100} y={100} outerRadius={100} innerRadius={50}
+    //           data={[{value: 92-34, label: 'Code lines'},
+    //                  {value: 34, label: 'Empty lines'}]} />
+
     table.map( userID, i => {
       User.find({_id: userID})
         .then(user => {
-          table[i].name = user.username;
-          table[i].completed = user.completed;
+          table[i].value = user.completed;
+          table[i].label = user.username;
         })
     })
   res.send(table);
