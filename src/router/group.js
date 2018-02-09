@@ -20,12 +20,12 @@ groupRouter.post('/group', bearer, bodyParser.json(), (req, res, next) => {
 
   group.save()
     .then( group => {
-
       User.findById(req.body.id)
         .then(user => {
           if(user) {
             user.group_IDs.push(group._id);
             user.groupNames.push(req.body.name);
+            user.groupAliases.push(alias);
             return user.save()
           }
         })
@@ -56,65 +56,55 @@ groupRouter.put('/group/:groupID', bearer, bodyParser.json(), (req, res, next) =
     return table;
 })
 
-//unsubs for most users, deletes group for group creator.
-groupRouter.delete('/group/:id', (req, res, next) => {
-    let userID = req.body.id;
-    let groupID = req.params.id;
+//Either unsubscribe user from group, or delete group (if user is creator)
+groupRouter.delete('/group/:id', bearer, bodyParser.json(), (req, res, next) => {
 
-    //if the user sending the unsub is the creator...
-    if(group.createdBy == userID){
+  if(!req.body.id || !req.params.id) next(400);  
 
-      //find group to be deleted or unsubscribed
-      Group.find({_id:groupID})
-        .then(group => {
+  let userID = req.body.id;
+  let groupID = req.params.id;  
+  let index = undefined; 
 
-          //map over userIDs in group to find each user.
-          group.user_IDs.map(user_ID => {
-            User.find({id: userID})
-              .then(user => {
-
-                //filter group name and group id from user
-                user.save();
-              })
-            })
-
-            //remove all tasks associated with group
-            Task.find({group_ID: group._id})
-            .then(tasks => {
-              let toRemove = tasks.filter(task => task.group_ID == group._id);
-              toRemove.forEach(task => Task.remove({_id: task._id}));
-            })
-
-            //and finally remove the group itself.
-            Group.remove({_id:req.params.id})
-            .then(()=>res.send('success, group ' + groupID + ' removed.'))
-            .catch(next)
-      })
-
-    //if the user sending the request is NOT the creator of the group...
-  } else if(group.createdBy !== userID){
-
-    //find the user
-      User.find(_id: userID)
-        .then(user => {
-        
-          //find the group
-          Group.find(_id: groupID)
-          .then(group => {
-
-            //filter out the user from group.user_IDs
-            group.user_IDs = group.user_IDs.filter( id =>  id !==  userID)
-            group.save();
-
-            //filter out groupIDs from the user
-            user.group_IDs = user.group_IDs.filter( id => id !== groupID)
-
-            //filter out groupNames from the user.
-            user.groupNames = user.groupNames.filter(name => name !== group.name)
-            user.save();
-          })
-        })
-    }
+  Group.findById(groupID)
+    .then(group => {
+       console.log('Step 1: delete group')
+       if(group.createdBy === userID){
+          Group.remove({_id: groupID})
+            .then(() => { return; })
+       }
+       else {
+       console.log('Step 1: unsubscribe')
+          //remove the user's id from the group's array of user_IDs
+          group.user_IDs.filter(user => (user._id !== userID));
+          group.save();
+       }
+    });
+     
+  Task.remove({group_ID: groupID})
+    .then(() => {console.log('Step 2: remove tasks'); return; })
+    .catch(next)
+      
+  User.findById(userID)
+    .then(user => {
+      //get index of group at group_IDs array
+      index = user.group_IDs.indexOf(groupID);
+      //filter out groupIDs from the user
+      user.group_IDs = user.group_IDs.filter(id => id === groupID)
+      user.save();
+      return user;
+    })
+    .then(user => {
+      user.groupAliases = user.groupAliases.filter(alias => alias !== user.groupAliases[index]);
+      user.save();
+      return user;
+    })
+    .then(user => {
+      //filter out groupNames from the user by index retrieved from group_IDs.
+      user.groupNames = user.groupNames.filter(name => name !== user.groupNames[index])
+      user.save();
+      res.send(user);
+    })
+    .catch(next);
 })
 
 // return the createdBy user for a given group

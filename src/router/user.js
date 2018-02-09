@@ -48,6 +48,7 @@ userRouter.put('/user/:alias', bearer, bodyParser.json(), (req, res, next) => {
           .then(user => {
             user.group_IDs.push(group._id);
             user.groupNames.push(group.name);
+            user.groupAliases.push(group.alias);
             user.save();
             res.send(user);
           })
