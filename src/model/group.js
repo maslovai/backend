@@ -5,7 +5,7 @@ import Mongoose, {Schema} from 'mongoose';
 const groupSchema = Mongoose.Schema({
   name: {type: String, required: true},
   alias: {type: String},
-  createdBy: {type: String}
+  createdBy: {type: String},
   user_IDs: {type: Array},
 })
 
