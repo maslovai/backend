@@ -82,7 +82,7 @@ groupRouter.delete('/group/:id', (req, res, next) => {
             //remove all tasks associated with group
             Task.find({group_ID: group._id})
             .then(tasks => {
-              let toRemove = tasks.filter(task => {return task.group_ID == group._id});
+              let toRemove = tasks.filter(task => task.group_ID == group._id);
               toRemove.forEach(task => Task.remove({_id: task._id}));
             })
 
@@ -104,14 +104,14 @@ groupRouter.delete('/group/:id', (req, res, next) => {
           .then(group => {
 
             //filter out the user from group.user_IDs
-            group.user_IDs = group.user_IDs.filter( id => {return id !==  userID})
+            group.user_IDs = group.user_IDs.filter( id =>  id !==  userID)
             group.save();
 
             //filter out groupIDs from the user
-            user.group_IDs = user.group_IDs.filter( id => {return id!==groupID})
+            user.group_IDs = user.group_IDs.filter( id => id !== groupID)
 
             //filter out groupNames from the user.
-            user.groupNames = user.groupNames.filter(name => {return name !== group.name})
+            user.groupNames = user.groupNames.filter(name => name !== group.name)
             user.save();
           })
         })
