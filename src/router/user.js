@@ -50,9 +50,10 @@ userRouter.put('/user/:alias', bearer, bodyParser.json(), (req, res, next) => {
   //if group exists, search for user and update user.
   //Return user or return false if no group exists
   let userID = req.body.id;
-  let alias = req.params.alias;
+  let alias = req.params.alias.toLowerCase();
+
  
-  console.log('userID is ', userID)
+  console.log('alias is ', alias)
 
   Group.findOne({alias: alias})
     .then(group => {
