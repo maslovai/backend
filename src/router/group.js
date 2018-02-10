@@ -91,7 +91,7 @@ groupRouter.delete('/group/:id', bearer, bodyParser.json(), (req, res, next) => 
       //get index of group at group_IDs array
       index = user.group_IDs.indexOf(groupID);
       //filter out groupIDs from the user
-      user.group_IDs = user.group_IDs.filter(id => id === groupID)
+      user.group_IDs = user.group_IDs.filter(id => id !== groupID)
       user.save();
       return user;
     })
