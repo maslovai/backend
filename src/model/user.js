@@ -14,7 +14,7 @@ const userSchema =    new Schema({
     username: {type: String, required: true, unique: true},
     passwordHash: {type: String},
     tokenSeed: {type: String, unique: true, default: ''},
-    group_IDs: {type: Array},
+    group_IDs: [{type: String}],
     groupNames: {type: Array},
     groupAliases: {type: Array},
     completedTasks: {type: Array}, 
