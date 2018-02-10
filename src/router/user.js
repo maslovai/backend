@@ -16,7 +16,22 @@ userRouter.get('/user', bearer, (req, res, next) => {
   else next();
 })
 
-//this route returns the entire user, so it also contains group_IDs
+//this route returns the user's firstName
+userRouter.get('/user/firstname/:id', (req, res, next) => {
+  
+  if(!req.params.id) next(400);
+  
+  let id = req.params.id;
+
+  User.findOne({_id: id})
+    .then(user => {
+      if(user) res.send(user.firstName);
+      else res.send('');
+    })
+  .catch(next);
+})
+
+//this route returns the user's group_IDs
 userRouter.get('/user/:id', bearer, (req, res, next) => {
   let id = req.params._id;
 
