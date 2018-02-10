@@ -17,7 +17,8 @@ const userSchema = new Schema({
     group_IDs: {type: Array},
     groupNames: {type: Array},
     groupAliases: {type: Array},
-    completedTasks: {type: Array},    
+    completedTasks: {type: Array}, 
+    firstName: {type: String}   
 });
 
 // INSTANCE METHODS
@@ -82,11 +83,15 @@ User.createFromOAuth = function (OAuthUser) {
           // Create the user
           let username = OAuthUser.email.split('@')[0];
           let email = OAuthUser.email;
+          let lastInitial = OAuthUser.family_name.length ? OAuthUser.family_name.slice(0, 1) : undefined;
+          let firstname = OAuthUser.given_name.length ? OAuthUser.given_name : username;
+          let name = (lastInitial && OAuthUser.given_name.length) ? firstname + ' ' + lastInitial : firstname;
 
           console.log("Welcome To Our World", username);
           return new User({
               username: username,
-              email: OAuthUser.email
+              email: OAuthUser.email,
+              firstName: name
           }).save();
       })
 
