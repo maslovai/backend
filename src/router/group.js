@@ -17,7 +17,8 @@ groupRouter.post('/group', bearer, bodyParser.json(), (req, res, next) => {
 
   console.log('req.body in group POST is ', req.body);
   let group = new Group({name: req.body.name, alias: alias, createdBy: req.body.id})
-
+  
+  // group.user_IDs.push(req.body.id);
   group.save()
     .then( group => {
       User.findById(req.body.id)
