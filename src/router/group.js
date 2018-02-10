@@ -11,14 +11,15 @@ const groupRouter = module.exports = express.Router();
 
 groupRouter.post('/group', bearer, bodyParser.json(), (req, res, next) => {
 
+  if(!req.body.id) next(400);
+
   //it needs req.body.name which becomes the name for the new group
   //it needs req.user._id to locate and update the user with the new groupID
   const alias = namor.generate({ words: 3, numbers: 0 });
+  let userID = req.body.id;
 
-  console.log('req.body in group POST is ', req.body);
-  let group = new Group({name: req.body.name, alias: alias, createdBy: req.body.id})
-  
-  // group.user_IDs.push(req.body.id);
+  let group = new Group({name: req.body.name, alias: alias, createdBy: req.body.id, user_IDs: userID})
+
   group.save()
     .then( group => {
       User.findById(req.body.id)
