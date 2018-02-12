@@ -2,7 +2,7 @@
 
 import expect from 'expect';
 import mongoose from 'mongoose';
-import Task from '../../src/model/task';
+import Task from '../../model/task';
 
 mongoose.connect(process.env.MONGODB_URI, {useMongoClient: true});
 

@@ -5,8 +5,8 @@ import express,{Router} from 'express';
 import mongoose from 'mongoose';
 import expect from 'expect';
 import superagent from 'superagent';
-import Task from '../../src/model/task';
-import taskRouter from '../../src/router/task';
+import Task from '../../model/task';
+import taskRouter from '../../router/task';
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(process.env.MONGODB_URI);
@@ -16,7 +16,6 @@ server.use(taskRouter);
 
 
 server.use((err, req, res, next ) => {
-    // console.log(err);
     res.status(err.statusCode||500).send(err.message||'server error')
 })
 
@@ -26,7 +25,6 @@ beforeAll(()=>{
 })
 
 afterAll(()=>{
-    // Task.remove({});
     mongoose.connection.close();
     server.close();
     console.log('closing');
@@ -40,7 +38,6 @@ describe('Task router', ()=>{
         .send({"name":"test"})
         .then(Promise.reject)
         .catch(res=>{
-            // console.log('in the 404 one:::::', res.body)
             expect(res.status).toEqual(404);
             expect(res.message).toBe('Not Found')
         })
@@ -58,14 +55,14 @@ describe('Task router:', ()=>{
         .send({})
         .then()
         .catch(res => {
-         expect(res.status).toEqual(415);
+         expect(res.status).toEqual(400);
         })
     })
 
     it('post should respond with the body content for a post request with a valid body',()=>{
         superagent 
         .post(`http://localhost:${PORT}/task`)
-        .set({'Content-Type':'application/json'})
+        // .set({'Content-Type':'application/json'})
         .send({'name':'test task', 'group_ID':groupID})
         .then((res) => {
             console.log('in post, res::::::::::::: ' , res.body)
@@ -73,17 +70,12 @@ describe('Task router:', ()=>{
             expect(res.body.group_ID).toBe(groupID)
             idForGet = res.body.id;
         })
-        .catch(next)
+        .catch(err=> console.log(err.message))
         // .catch(err => console.log(err))
     })
 
     it ('get tasks should return a list of tasks with a group ID', ()=>{
         
-        // for (let i = 0; i<2;i++){
-        //     superagent
-        //     .get(`http://localhost:${PORT}/task`)
-        //     .send({'name':`task${[i]}`, 'groupID':groupID})
-        // }
         superagent
         .get(`http://localhost:${PORT}/tasks/${groupID}`)
         .end((err, res) => {
@@ -93,28 +85,35 @@ describe('Task router:', ()=>{
 
     })
 
-    it ('update tasks should update a record in db', ()=>{
-        
-        for (let i = 0; i<2;i++){
+    it ('update tasks should update a record in db', ()=>{  
         superagent
         .put(`http://localhost:${PORT}/task`)
         .set({"Content-Type":"application/json"})
         .send({'completedBy':`iryna`})
-        .end()
-        }
-        superagent
-        .get(`http://localhost:${PORT}/tasks/${groupID}`)
-        .end((err, res) => {
-            expect(res.body).not.toBe(null);
-            expect(res.body.completedBy).toEqual('hello')
-        })
+            .then(()=>{
+                superagent
+                .get(`http://localhost:${PORT}/tasks/${groupID}`)
+                .end((err, res) => {
+                expect(res.body).not.toBe(null);
+                expect(res.body.completedBy).toEqual('hello')
+            })
+        })   
     })
 
     it ('delete task should delete a record in db', ()=>{
-
+        superagent
+        .post(`http://localhost:${PORT}/task`)
+        .set({'Content-Type':'application/json'})
+        .send({'name':'test task two', 'group_ID':groupID})
+        .then(res =>{
+            superagent
+            .delete
+            (`http://localhost:${PORT}/task/${res.task._id}`)
+            .then(res=>{
+                console.log(res.body)
+                expect (res.text).toEqual("Success!")
+            })
+        })
     })
-
-
-
 
 })

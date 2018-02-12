@@ -2,20 +2,19 @@
 
 import expect from 'expect';
 import mongoose from 'mongoose';
-import User from '../../src/model/task';
+import User from '../../model/user';
 
 mongoose.connect(process.env.MONGODB_URI, {useMongoClient: true});
 
-const mockUser = {
-  "name": "Princess Ariel",
-};
-let testUser = new User(mockUser);
+
+let testUser = new User({"username": "Princess Ariel"});
 let id = (testUser._id);
 
 // Test 1. If records get created
 describe('User Model', () => {
   it('should create a record', () =>{
-    expect(testUser.name).toEqual('Princess Ariel');
+    // console.log('user id:', testUser.id);
+    expect(testUser.username).toEqual('Princess Ariel');
     expect(testUser._id).not.toBe('undefined');
   })
   it ('sould save a record to the DB', ()=>{
@@ -31,10 +30,12 @@ describe('User Model', () => {
         .then(()=>{
           User.findOne({_id:id})
           .then(user=> expect(user._id).toEqual(undefined))  
+          mongoose.disconnect();
         })
-        .catch(console.error);
+        .catch(err=> {
+          console.error;
+          mongoose.disconnect()
+        });
     })
 })
-
-mongoose.disconnect();
 

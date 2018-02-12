@@ -2,7 +2,7 @@
 
 import expect from 'expect';
 import mongoose from 'mongoose';
-import Group from '../../src/model/group';
+import Group from '../../model/group';
 
 mongoose.connect(process.env.MONGODB_URI, {useMongoClient: true});
 
