@@ -16,7 +16,22 @@ userRouter.get('/user', bearer, (req, res, next) => {
   else next();
 })
 
-//this route returns the entire user, so it also contains group_IDs
+//this route returns the user's firstName
+userRouter.get('/user/firstname/:id', (req, res, next) => {
+  
+  if(!req.params.id) next(400);
+  
+  let id = req.params.id;
+
+  User.findOne({_id: id})
+    .then(user => {
+      if(user) res.send(user.firstName);
+      else res.send('');
+    })
+  .catch(next);
+})
+
+//this route returns the user's group_IDs
 userRouter.get('/user/:id', bearer, (req, res, next) => {
   let id = req.params._id;
 
@@ -35,9 +50,10 @@ userRouter.put('/user/:alias', bearer, bodyParser.json(), (req, res, next) => {
   //if group exists, search for user and update user.
   //Return user or return false if no group exists
   let userID = req.body.id;
-  let alias = req.params.alias;
+  let alias = req.params.alias.toLowerCase();
+
  
-  console.log('userID is ', userID)
+  console.log('alias is ', alias)
 
   Group.findOne({alias: alias})
     .then(group => {

@@ -1,4 +1,13 @@
-1. Description.  Task-Off helps keep track of a set of tasks and tasks' status (complete/incomplete).
+# Task-Off! 
+
+An app that allows users to create multiple groups and manage tasks/chores that need to be done.
+
+Users can invite people to a group by using the alias provided when a new group is created. 
+
+Completed tasks will show who completed them.
+
+
+### Our process...
 
 Ideas for app:
 
