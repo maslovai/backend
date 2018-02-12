@@ -9,7 +9,6 @@ import Task from '../../model/task';
 import taskRouter from '../../router/task';
 
 mongoose.Promise = require('bluebird');
-mongoose.connect(process.env.MONGODB_URI);
 
 const server = require('express')();
 server.use(taskRouter);
@@ -21,6 +20,7 @@ server.use((err, req, res, next ) => {
 
 beforeAll(()=>{
     server.listen(PORT);
+    mongoose.connect(process.env.MONGODB_URI);
     return  Task.remove({})
 })
 
@@ -30,7 +30,8 @@ afterAll(()=>{
     console.log('closing');
 })
 
-describe('Task router', ()=>{
+describe('Task router:', ()=>{
+
     it('should respond with a 404 for unregistered paths ',()=>{
         return superagent
         .post(`localhost:${PORT}/si`)
@@ -42,23 +43,19 @@ describe('Task router', ()=>{
             expect(res.message).toBe('Not Found')
         })
     })
-})
 
-let groupID = '5a7a04a22a1b52cf493006dc';
-describe('Task router:', ()=>{
-    let idForGet;
-
-    it ('should respond with 400 if no body', ()=>{
+    it ('POST should respond with 400 if no body', ()=>{
         superagent
         .post(`http://localhost:${PORT}/task`)
-        .set({'Content-Type':'application/json'})
-        .send({})
-        .then()
-        .catch(res => {
-         expect(res.status).toEqual(400);
+        .set({'content-type':'application/json'})
+        .send()
+        .end((err, res) => {
+            expect(err.status).toBe(400)
         })
     })
 
+    let idForGet;
+    let groupID = '5a7a04a22a1b52cf493006dc';
     it('post should respond with the body content for a post request with a valid body',()=>{
         superagent 
         .post(`http://localhost:${PORT}/task`)
@@ -74,7 +71,7 @@ describe('Task router:', ()=>{
         // .catch(err => console.log(err))
     })
 
-    it ('get tasks should return a list of tasks with a group ID', ()=>{
+    it ('GET tasks should return a list of tasks with a group ID', ()=>{
         
         superagent
         .get(`http://localhost:${PORT}/tasks/${groupID}`)
@@ -82,10 +79,17 @@ describe('Task router:', ()=>{
             expect(res.body).not.toBe(null);
             expect(res.body.groupID).toEqual(groupID)
         })
-
     })
 
-    it ('update tasks should update a record in db', ()=>{  
+    it ('GET tasks should respond with a 400 if no groupID is provided', ()=>{
+        superagent
+        .get(`http://localhost:${PORT}/tasks/`)
+        .end((err, res) => {
+            expect(err.status).toBe(400)
+        })
+    })
+
+    it ('PUT should update a record in db', ()=>{  
         superagent
         .put(`http://localhost:${PORT}/task`)
         .set({"Content-Type":"application/json"})
@@ -100,7 +104,7 @@ describe('Task router:', ()=>{
         })   
     })
 
-    it ('delete task should delete a record in db', ()=>{
+    it ('DELETE  should delete a record in db', ()=>{
         superagent
         .post(`http://localhost:${PORT}/task`)
         .set({'Content-Type':'application/json'})
@@ -115,5 +119,4 @@ describe('Task router:', ()=>{
             })
         })
     })
-
 })
