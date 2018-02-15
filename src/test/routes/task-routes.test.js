@@ -21,13 +21,11 @@ server.use((err, req, res, next ) => {
 beforeAll(()=>{
     server.listen(PORT);
     mongoose.connect(process.env.MONGODB_URI);
-    return  Task.remove({})
 })
 
 afterAll(()=>{
-    mongoose.connection.close();
     server.close();
-    console.log('closing');
+    mongoose.connection.close();
 })
 
 describe('Task router:', ()=>{
@@ -41,16 +39,6 @@ describe('Task router:', ()=>{
         .catch(res=>{
             expect(res.status).toEqual(404);
             expect(res.message).toBe('Not Found')
-        })
-    })
-
-    it ('POST should respond with 400 if no body', ()=>{
-        superagent
-        .post(`http://localhost:${PORT}/task`)
-        .set({'content-type':'application/json'})
-        .send()
-        .end((err, res) => {
-            expect(err.status).toBe(400)
         })
     })
 
@@ -81,14 +69,6 @@ describe('Task router:', ()=>{
         })
     })
 
-    it ('GET tasks should respond with a 400 if no groupID is provided', ()=>{
-        superagent
-        .get(`http://localhost:${PORT}/tasks/`)
-        .end((err, res) => {
-            expect(err.status).toBe(400)
-        })
-    })
-
     it ('PUT should update a record in db', ()=>{  
         superagent
         .put(`http://localhost:${PORT}/task`)
@@ -116,6 +96,10 @@ describe('Task router:', ()=>{
             .then(res=>{
                 console.log(res.body)
                 expect (res.text).toEqual("Success!")
+                mongoose.disconnect();
+            })
+            .catch(()=>{
+                mongoose.disconnect();
             })
         })
     })
